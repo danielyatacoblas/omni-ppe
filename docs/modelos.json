@@ -28,11 +28,11 @@
     "video": "video_1.mp4",
     "res": 640,
     "dispositivo": "cuda",
-    "ms": 50.7,
-    "fps": 19.7,
+    "ms": 127.4,
+    "fps": 7.9,
     "dets": 6.7,
     "conf_media": 0.762,
-    "mejor_ms": 44.6,
+    "mejor_ms": 117.6,
     "fuente": [
       "SH17 · CC BY-NC-SA 4.0",
       "https://github.com/ahmadmughees/SH17dataset"
@@ -67,11 +67,11 @@
     "video": "video_1.mp4",
     "res": 640,
     "dispositivo": "cuda",
-    "ms": 23.5,
-    "fps": 42.6,
+    "ms": 52.6,
+    "fps": 19.0,
     "dets": 5.7,
     "conf_media": 0.819,
-    "mejor_ms": 20.0,
+    "mejor_ms": 48.9,
     "fuente": [
       "SH17 · CC BY-NC-SA 4.0",
       "https://github.com/ahmadmughees/SH17dataset"
@@ -106,11 +106,11 @@
     "video": "video_1.mp4",
     "res": 640,
     "dispositivo": "cuda",
-    "ms": 19.1,
-    "fps": 52.4,
+    "ms": 41.8,
+    "fps": 23.9,
     "dets": 3.9,
     "conf_media": 0.791,
-    "mejor_ms": 15.6,
+    "mejor_ms": 38.8,
     "fuente": [
       "Construction Site Safety · VoxDroid",
       null
@@ -145,11 +145,11 @@
     "video": "video_1.mp4",
     "res": 640,
     "dispositivo": "cuda",
-    "ms": 16.3,
-    "fps": 61.4,
+    "ms": 38.3,
+    "fps": 26.1,
     "dets": 1.1,
     "conf_media": 0.499,
-    "mejor_ms": 13.7,
+    "mejor_ms": 35.4,
     "fuente": [
       "Workspace Safety Detection · hafizqaim",
       null
