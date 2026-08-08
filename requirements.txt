@@ -1,0 +1,15 @@
+# --- Núcleo de visión ---
+ultralytics>=8.3.0
+opencv-python>=4.9.0
+numpy>=1.26.0
+
+# --- Backend / streaming ---
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+python-dotenv>=1.0.0
+python-multipart>=0.0.9
+
+# NOTA (RTX 3060 / CUDA):
+# 'ultralytics' instala torch CPU por defecto. Para usar tu GPU instala primero:
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+# y luego: pip install -r requirements.txt

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PPE MVP — Detección de EPP</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h1>PPE Comparador</h1>
+
+      <label class="field-label">Modelo</label>
+      <select id="modelSelect"></select>
+      <div id="modelInfo" class="hint"></div>
+
+      <label class="field-label">Video de prueba</label>
+      <select id="videoSelect"></select>
+
+      <label class="field-label">Confianza: <span id="confVal">0.25</span></label>
+      <input type="range" id="conf" min="0.05" max="0.9" step="0.05" value="0.25" />
+
+      <div class="checks">
+        <p class="field-label">Requerir EPP (según el modelo)</p>
+        <div id="checkList"></div>
+      </div>
+
+      <label class="switch-row">
+        <span>Strict Mode</span>
+        <input type="checkbox" id="strict" />
+      </label>
+
+      <button id="startBtn" class="btn primary">▶ Iniciar</button>
+      <button id="stopBtn" class="btn">■ Detener</button>
+
+      <div class="meta">
+        <div>Modelo: <b id="modelName">—</b></div>
+        <div>Device: <b id="deviceName">—</b></div>
+        <div>FPS: <b id="fps">0</b></div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="video-wrap">
+        <img id="stream" alt="stream" />
+        <div id="placeholder" class="placeholder">Selecciona un video e inicia</div>
+      </div>
+
+      <section class="people" id="people"></section>
+    </main>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
