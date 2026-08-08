@@ -25,6 +25,20 @@ ahora mismo?** Sale un porcentaje de cumplimiento y un verde o un rojo.
 
 ## Cómo funciona
 
+<a href="docs/flujo.svg">
+  <img src="docs/flujo.svg" alt="De la cámara de la obra a «puede entrar»" width="100%">
+</a>
+
+<sub>Ábrelo en grande: <a href="docs/flujo.svg"><code>docs/flujo.svg</code></a>.
+Las cifras de las tarjetas no están escritas a mano — las pone
+<a href="scripts/diagrama.py"><code>scripts/diagrama.py</code></a> leyendo
+<code>docs/modelos.json</code>, que a su vez genera
+<a href="scripts/medir_modelos.py"><code>scripts/medir_modelos.py</code></a>
+midiendo los modelos de verdad. Si mañana se cambia un modelo, se corren los
+dos y el dibujo se corrige solo.</sub>
+
+### El mismo recorrido, en corto
+
 ```mermaid
 flowchart LR
   V["Video de obra"] --> D["Detector SH17<br/>17 clases de EPP"]
@@ -60,16 +74,40 @@ Tres detalles que las pruebas dejan fijados:
   en el `.env`. Si no, nadie podría pasar nunca, y eso no se notaría hasta
   tener la cola en la puerta.
 
-### Los modelos
+<!-- MODELOS:inicio -->
 
-| Familia | Qué es | Licencia |
-|---|---|---|
-| **SH17** | 17 clases de EPP; es lo que usa la app | **CC BY-NC-SA 4.0 — no comercial** |
-| **CSS** | Varios modelos «puesto / no puesto» de terceros | Solo para `compare.py` |
+### Los modelos, medidos
 
-> ⚠️ SH17 no se puede usar comercialmente. Para una entrega real hay que
-> cambiar de pesos (*Ultralytics construction-ppe* o un dataset propio de
-> Roboflow); el código no cambia, solo `MODEL_WEIGHTS`.
+| Modelo | Para qué | Entrada | Precisión | Recall | mAP@50 | mAP@50-95 |
+|---|---|---|---|---|---|---|
+| **`sh17_yolo9e.pt`** | EPP, 17 clases — el que usa la app | 640² | 81.2 % | 64.9 % | 70.9 % | 48.6 % |
+| **`sh17_yolo8m.pt`** | EPP, variante más rápida | 640² | 77.8 % | 60.3 % | 66.5 % | 45.6 % |
+| **`css_voxdroid.pt`** | Puesto / no puesto (comparador) | 640² | 95.2 % | 79.8 % | 87.8 % | 62.5 % |
+| **`hafizqaim.pt`** | Puesto / no puesto (comparador) | 640² | 71.9 % | 71.4 % | 73.4 % | 45.6 % |
+
+<sub>Estas cuatro columnas **no** se calculan aquí: salen del propio archivo `.pt`, donde Ultralytics guarda la validación del entrenamiento que produjo esos pesos. Son el acierto sobre el conjunto de validación de quien lo entrenó, **no** sobre los videos de este proyecto. Medir eso exigiría etiquetar a mano esta operación concreta, que es trabajo que un MVP todavía no ha hecho; dar un porcentaje inventado sería peor que no darlo. Comprobación de que la lectura es correcta: `yolo11n` sale con mAP@50-95 = 39,4 % y Ultralytics publica 39,5 % para ese modelo en COCO.</sub>
+
+### De dónde sale cada modelo
+
+| Modelo | Entrenado sobre | Épocas | Resolución | Origen |
+|---|---|---|---|---|
+| **`sh17_yolo9e.pt`** | `safe_human` | 200 | 640×640 | [SH17 · CC BY-NC-SA 4.0](https://github.com/ahmadmughees/SH17dataset) |
+| **`sh17_yolo8m.pt`** | `safe_human` | 200 | 640×640 | [SH17 · CC BY-NC-SA 4.0](https://github.com/ahmadmughees/SH17dataset) |
+| **`css_voxdroid.pt`** | `data` | 200 | 640×640 | Construction Site Safety · VoxDroid |
+| **`hafizqaim.pt`** | `data` | 10 | 640×640 | Workspace Safety Detection · hafizqaim |
+
+<sub>El conjunto, las épocas y la resolución salen de `train_args`, que Ultralytics guarda dentro del propio `.pt`. Es decir: no es lo que dice la documentación del modelo, es lo que quedó grabado en el archivo que este repositorio usa de verdad. Los nombres de conjunto son los del disco de quien entrenó —`retrain_data`, `safe_human`— porque es literalmente lo que hay dentro.</sub>
+
+| Modelo | Parámetros | Clases | Latencia (mejor) | Latencia (mediana) | Det./fotograma | Confianza media |
+|---|---|---|---|---|---|---|
+| **`sh17_yolo9e.pt`** | 58.2 M | 17 | 44.6 ms · 22 fps | 50.7 ms · 19.7 fps | 6.7 | 0.762 |
+| **`sh17_yolo8m.pt`** | 25.9 M | 17 | 20.0 ms · 50 fps | 23.5 ms · 42.6 fps | 5.7 | 0.819 |
+| **`css_voxdroid.pt`** | 11.1 M | 10 | 15.6 ms · 64 fps | 19.1 ms · 52.4 fps | 3.9 | 0.791 |
+| **`hafizqaim.pt`** | 3.0 M | 17 | 13.7 ms · 73 fps | 16.3 ms · 61.4 fps | 1.1 | 0.499 |
+
+<sub>Esto sí se mide aquí, con <a href="scripts/medir_modelos.py"><code>scripts/medir_modelos.py</code></a>, sobre fotogramas reales de los videos del repositorio, en una RTX 3060 Laptop y a la resolución que usa la aplicación. Sesenta fotogramas, descartando los veinte primeros.<br>Se dan <b>dos</b> latencias a propósito. Esta GPU está a 210 MHz en reposo y tarda segundos en subir de reloj, así que la mediana se mueve bastante entre pasadas —el mismo <code>yolo11n</code> ha dado 20 y 48 fps— mientras que el mejor caso es estable y representa lo que la máquina puede sostener. Dar solo la cifra buena sería vender de más; dar solo la mediana, castigar al modelo por la gestión de energía del portátil.</sub>
+
+<!-- MODELOS:fin -->
 
 ## Probarlo
 
