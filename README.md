@@ -7,7 +7,9 @@
 > ![pruebas](https://img.shields.io/badge/pruebas-13%20pasando-129A6B)
 > ![licencia](https://img.shields.io/badge/pesos-CC%20BY--NC--SA%204.0-E5484D)
 
-![OMNI PPE en marcha](docs/capturas/01-cumplimiento.png)
+<p align="center">
+  <img src="docs/portada.svg" alt="OMNI PPE: de un vigilante mirando a un «puede entrar» por persona" width="100%">
+</p>
 
 ## El problema
 
