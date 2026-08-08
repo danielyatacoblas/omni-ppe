@@ -1,0 +1,158 @@
+[
+  {
+    "archivo": "sh17_yolo9e.pt",
+    "rol": "EPP, 17 clases — el que usa la app",
+    "umbral": 0.25,
+    "imgsz": 640,
+    "epochs": 200,
+    "dataset": "safe_human",
+    "licencia": "AGPL-3.0 (https://ultralytics.com/license)",
+    "metricas": {
+      "precision": 0.8115,
+      "recall": 0.6492,
+      "mAP50": 0.7088,
+      "mAP50-95": 0.4864
+    },
+    "parametros": 58158019,
+    "clases": 17,
+    "nombres": [
+      "person",
+      "ear",
+      "ear-mufs",
+      "face",
+      "face-guard",
+      "face-mask",
+      "foot",
+      "tool"
+    ],
+    "video": "video_1.mp4",
+    "res": 640,
+    "dispositivo": "cuda",
+    "ms": 50.7,
+    "fps": 19.7,
+    "dets": 6.7,
+    "conf_media": 0.762,
+    "mejor_ms": 44.6,
+    "fuente": [
+      "SH17 · CC BY-NC-SA 4.0",
+      "https://github.com/ahmadmughees/SH17dataset"
+    ]
+  },
+  {
+    "archivo": "sh17_yolo8m.pt",
+    "rol": "EPP, variante más rápida",
+    "umbral": 0.25,
+    "imgsz": 640,
+    "epochs": 200,
+    "dataset": "safe_human",
+    "licencia": "AGPL-3.0 (https://ultralytics.com/license)",
+    "metricas": {
+      "precision": 0.7775,
+      "recall": 0.6032,
+      "mAP50": 0.665,
+      "mAP50-95": 0.4555
+    },
+    "parametros": 25866163,
+    "clases": 17,
+    "nombres": [
+      "person",
+      "ear",
+      "ear-mufs",
+      "face",
+      "face-guard",
+      "face-mask",
+      "foot",
+      "tool"
+    ],
+    "video": "video_1.mp4",
+    "res": 640,
+    "dispositivo": "cuda",
+    "ms": 23.5,
+    "fps": 42.6,
+    "dets": 5.7,
+    "conf_media": 0.819,
+    "mejor_ms": 20.0,
+    "fuente": [
+      "SH17 · CC BY-NC-SA 4.0",
+      "https://github.com/ahmadmughees/SH17dataset"
+    ]
+  },
+  {
+    "archivo": "css_voxdroid.pt",
+    "rol": "Puesto / no puesto (comparador)",
+    "umbral": 0.25,
+    "imgsz": 640,
+    "epochs": 200,
+    "dataset": "data",
+    "licencia": "AGPL-3.0 (https://ultralytics.com/license)",
+    "metricas": {
+      "precision": 0.9519,
+      "recall": 0.7983,
+      "mAP50": 0.8776,
+      "mAP50-95": 0.6249
+    },
+    "parametros": 11139470,
+    "clases": 10,
+    "nombres": [
+      "Hardhat",
+      "Mask",
+      "NO-Hardhat",
+      "NO-Mask",
+      "NO-Safety Vest",
+      "Person",
+      "Safety Cone",
+      "Safety Vest"
+    ],
+    "video": "video_1.mp4",
+    "res": 640,
+    "dispositivo": "cuda",
+    "ms": 19.1,
+    "fps": 52.4,
+    "dets": 3.9,
+    "conf_media": 0.791,
+    "mejor_ms": 15.6,
+    "fuente": [
+      "Construction Site Safety · VoxDroid",
+      null
+    ]
+  },
+  {
+    "archivo": "hafizqaim.pt",
+    "rol": "Puesto / no puesto (comparador)",
+    "umbral": 0.25,
+    "imgsz": 640,
+    "epochs": 10,
+    "dataset": "data",
+    "licencia": "AGPL-3.0 (https://ultralytics.com/license)",
+    "metricas": {
+      "precision": 0.7192,
+      "recall": 0.714,
+      "mAP50": 0.7341,
+      "mAP50-95": 0.4562
+    },
+    "parametros": 3014163,
+    "clases": 17,
+    "nombres": [
+      "Barefoots",
+      "Ear-protection",
+      "Harness",
+      "No_Ear-Protection",
+      "No_Glasses",
+      "Sandals",
+      "boots",
+      "face_mask"
+    ],
+    "video": "video_1.mp4",
+    "res": 640,
+    "dispositivo": "cuda",
+    "ms": 16.3,
+    "fps": 61.4,
+    "dets": 1.1,
+    "conf_media": 0.499,
+    "mejor_ms": 13.7,
+    "fuente": [
+      "Workspace Safety Detection · hafizqaim",
+      null
+    ]
+  }
+]
