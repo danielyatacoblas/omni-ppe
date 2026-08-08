@@ -1,60 +1,103 @@
-# MVP PPE — Detección de EPP en vivo
+# OMNI PPE — Detección de EPP en vivo (ApexCorp)
 
-Detecta por persona si lleva **casco, lentes, guantes y chaleco** sobre videos de
-prueba, con streaming fluido y una **barra de % de cumplimiento** que se pone
-**verde (LISTO)** al superar el umbral o **rojo (NO LISTO)** si falta EPP.
+> **Visión computacional · YOLO (SH17) · FastAPI · CUDA o CPU**
 
-- **Modelo:** pesos pre-entrenados **SH17** (17 clases PPE) — no se entrena desde 0.
-- **Aceleración:** CUDA (RTX 3060). Cambia a CPU en `.env` si hace falta.
-- **Streaming:** FastAPI + MJPEG, con paso de FPS/skip como en `vision-node`.
+Estado: **v0.1.0 · prototipo funcional sobre video real de obra.**
 
-> ⚠️ SH17 es **CC BY-NC-SA 4.0 (no comercial)** — úsalo solo para este prototipo.
-> Para entrega comercial ver la ruta con *Ultralytics construction-ppe* / Roboflow.
+![Interfaz de OMNI PPE](docs/ui.png)
 
-## 1. Instalar
+Detecta por persona si lleva **casco, chaleco, lentes y guantes**, y muestra una
+barra de cumplimiento que se pone **verde (LISTO)** al superar el umbral o
+**roja (NO LISTO)** si falta algo.
+
+Lo que responde: *¿puede esta persona entrar a la obra ahora mismo?* — una
+pregunta que hoy contesta un vigilante mirando, persona por persona.
+
+## Probarlo
 
 ```bash
-cd first_mvp_ppe
-python -m venv .venv
-.venv\Scripts\activate            # Windows
-# GPU (RTX 3060) — instala torch CUDA primero:
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
 pip install -r requirements.txt
+python download_models.py          # SH17 yolo9e a weights/
+uvicorn backend.main:app --port 8000
 ```
 
-## 2. Descargar pesos SH17
+Copia tus `.mp4` a `videos/` y abre <http://localhost:8000>: elige el video,
+ajusta la confianza y el EPP requerido, y pulsa **Iniciar**.
+
+**Los pesos y los videos no están en el repositorio.** Son entrada, no código,
+y pasan de los 100 MB que GitHub rechaza. `download_models.py` los recupera:
 
 ```bash
-python download_weights.py            # yolo9e (máx precisión) -> weights/sh17_yolo9e.pt
-# alternativas: python download_weights.py yolo8m   (más rápido)
+python download_models.py --list             # qué variantes hay
+python download_models.py --variant yolo8m   # más rápida, algo menos precisa
+python download_models.py --all              # + los modelos que compara compare.py
 ```
 
-## 3. Poner videos de prueba
+> ⚠️ SH17 es **CC BY-NC-SA 4.0 — no comercial**. Vale para este prototipo. Para
+> una entrega comercial hay que cambiar de pesos (*Ultralytics construction-ppe*
+> o un dataset propio de Roboflow); el código no cambia, solo `MODEL_WEIGHTS`.
 
-Copia tus `.mp4` a la carpeta `videos/`. Aparecen en el selector de la UI.
+## Cómo se calcula el porcentaje
 
-## 4. Ejecutar
+Cada ítem detectado se asigna a la persona **que más lo contiene**, no a la más
+cercana: dos operarios juntos harían que el casco de uno puntúe al otro. Luego
+se suman los pesos de lo que sí lleva puesto.
 
-```bash
-uvicorn backend.main:app --host 0.0.0.0 --port 8000
-```
+| Ítem | Peso | Por qué |
+|---|---|---|
+| Casco | `0.45` | Casco + chaleco = `0.90`, por encima del umbral `0.80` |
+| Chaleco | `0.45` | |
+| Lentes | `0.05` | Suman, pero por sí solos no dejan pasar a nadie |
+| Guantes | `0.05` | |
 
-Abre <http://localhost:8000>, elige un video, ajusta confianza / EPP requerido y
-pulsa **Iniciar**.
+Tres detalles que la prueba `test_scoring.py` deja fijados:
+
+- **Un casco en el suelo no cuenta como puesto.** Con modelos que solo detectan
+  presencia se comprueba la geometría: la caja tiene que caer sobre la cabeza.
+- **Un «sin casco» explícito gana a un «con casco» más flojo.** Si el modelo ve
+  las dos cosas, manda la de más confianza.
+- **Casco + chaleco tienen que seguir bastando** aunque alguien toque los pesos
+  en el `.env`. Si no, nadie podría pasar nunca y no se notaría hasta la obra.
 
 ## Ajustes (`.env`)
 
-| Clave | Descripción |
-| ----- | ----------- |
+| Clave | Para qué |
+|---|---|
 | `MODEL_WEIGHTS` | Ruta a los pesos (`weights/sh17_yolo9e.pt`) |
 | `DEVICE` | `cuda:0` o `cpu` |
-| `TARGET_FPS` | FPS de inferencia (fluidez) |
-| `PPE_WEIGHT_*` | Peso de cada ítem: casco `.40`, lentes `.25`, guantes `.20`, chaleco `.15` |
-| `READY_THRESHOLD` | % mínimo para "LISTO" (default `0.80`) |
-| `STRICT_MODE` | Exige TODOS los ítems requeridos presentes |
+| `TARGET_FPS` | FPS de inferencia — bajarlo da fluidez, no precisión |
+| `PPE_WEIGHT_*` | Peso de cada ítem |
+| `READY_THRESHOLD` | Mínimo para «LISTO» (`0.80`) |
+| `STRICT_MODE` | Exige **todos** los ítems requeridos, ignorando el porcentaje |
+| `HELMET_ON_HEAD` | Comprueba que el casco esté sobre la cabeza |
 
-## Cómo se calcula el %
+## Cómo está montado
 
-Cada ítem detectado se asigna a la persona que lo contiene; se suma el peso de los
-ítems presentes / peso total requerido → score 0..100 %. Verde si ≥ umbral.
-Los pesos y el umbral se editan en `.env` sin tocar código.
+```
+backend/
+├── config.py     todo por variable de entorno, sin tocar código
+├── registry.py   qué clase de cada modelo es qué ítem de EPP
+├── detector.py   carga de pesos e inferencia
+├── scoring.py    reparto de ítems por persona y cálculo del %  ← la lógica
+├── streamer.py   MJPEG a fps controlado
+└── main.py       API
+frontend/         interfaz sin framework
+compare.py        corre varios modelos sobre el mismo video y los compara
+```
+
+## Pruebas
+
+```bash
+python -m pytest test_scoring.py -q
+```
+
+Cubren `scoring.py`, que es la única parte que decide algo con consecuencias.
+Un fallo del detector se ve en pantalla; un fallo en el reparto de ítems no —
+solo sale un porcentaje que parece razonable y no lo es.
+
+## Licencia
+
+Código: uso interno de ApexCorp. Pesos SH17: CC BY-NC-SA 4.0, no comercial.
+
+<sub>OMNI PPE · ApexCorp — desarrollado por
+<a href="https://github.com/danielyatacoblas">Daniel Yataco Blas</a></sub>
