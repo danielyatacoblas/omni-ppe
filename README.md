@@ -3,7 +3,7 @@
 > **Visión computacional · YOLOv8/v9 (SH17) · FastAPI · CUDA o CPU**
 >
 > ![estado](https://img.shields.io/badge/estado-MVP%20funcional-2D6CDF)
-> ![version](https://img.shields.io/badge/versión-v0.3.0-129A6B)
+> ![version](https://img.shields.io/badge/versión-v0.5.0-129A6B)
 > ![pruebas](https://img.shields.io/badge/pruebas-13%20pasando-129A6B)
 > ![licencia](https://img.shields.io/badge/pesos-CC%20BY--NC--SA%204.0-E5484D)
 
@@ -190,7 +190,7 @@ porcentaje que parece razonable y no lo es.
 
 ## Cómo se trabajó
 
-**20 commits**, **12 fusiones** y **4 etiquetas** (`v0.1.0`, `v0.2.0`, `v0.3.0`, `v0.4.0`). al generar este bloque. Cada rama entra con `--no-ff`: un merge aplastado ahorra una línea y borra la única prueba de que aquello fue una tarea con principio y final.
+**21 commits**, **12 fusiones** y **5 etiquetas** (`v0.1.0`, `v0.2.0`, `v0.3.0`, `v0.4.0`, `v0.5.0`). al generar este bloque. Cada rama entra con `--no-ff`: un merge aplastado ahorra una línea y borra la única prueba de que aquello fue una tarea con principio y final.
 
 ```mermaid
 gitGraph
@@ -229,7 +229,7 @@ gitGraph
    checkout develop
    merge feature/pipeline-diagram-and-model-metrics
    checkout main
-   merge develop
+   merge develop tag: "v0.5.0"
    checkout develop
    branch main
    checkout main
